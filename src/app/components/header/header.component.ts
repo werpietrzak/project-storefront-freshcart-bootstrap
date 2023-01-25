@@ -11,7 +11,13 @@ import { CategoryModel } from "../../models/category.model";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
+  public mobileMenuToggle: boolean = false;
+
   readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getCategories();
 
   constructor(private _categoriesService: CategoriesService) {}
+
+  toggleMenu(): void {
+    this.mobileMenuToggle = !this.mobileMenuToggle;
+  }
 }
