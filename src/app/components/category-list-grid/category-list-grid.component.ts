@@ -11,7 +11,7 @@ import { CategoriesService } from "../../services/categories.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoryListGridComponent {
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
   constructor(private _categoriesService: CategoriesService) {}
 }
