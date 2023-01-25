@@ -7,7 +7,7 @@ import { StoreModel } from "../models/store.model";
 export class StoresService {
   constructor(private _httpClient: HttpClient) {}
 
-  getStores(): Observable<StoreModel[]> {
+  getAllStores(): Observable<StoreModel[]> {
     return this._httpClient.get<StoreModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-stores');
   }
 }
