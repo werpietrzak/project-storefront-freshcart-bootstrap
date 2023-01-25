@@ -11,7 +11,7 @@ import { CategoryModel } from "../../models/category.model";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
   constructor(private _categoriesService: CategoriesService) {}
 }

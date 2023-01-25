@@ -7,7 +7,7 @@ import { CategoryModel } from "../models/category.model";
 export class CategoriesService {
   constructor(private _httpClient: HttpClient) {}
 
-  getCategories(): Observable<CategoryModel[]> {
+  getAllCategories(): Observable<CategoryModel[]> {
     return this._httpClient.get<CategoryModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-categories');
   }
 }
