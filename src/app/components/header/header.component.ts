@@ -13,7 +13,7 @@ import { CategoryModel } from "../../models/category.model";
 export class HeaderComponent {
   public mobileMenuToggle: boolean = false;
 
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
   constructor(private _categoriesService: CategoriesService) {}
 

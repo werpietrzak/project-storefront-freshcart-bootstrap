@@ -13,9 +13,9 @@ import { StoreModel } from "../../models/store.model";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent {
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
-  readonly stores$: Observable<StoreModel[]> = this._storesService.getStores();
+  readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
 
   constructor(
     private _categoriesService: CategoriesService,
