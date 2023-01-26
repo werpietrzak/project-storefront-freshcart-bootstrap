@@ -6,6 +6,11 @@ export interface StoreModel {
   id: string;
 }
 
+export interface StoreTagModel {
+  id: string;
+  name: string;
+}
+
 export interface StoreQueryModel {
   name: string;
   logoUrl: string;
