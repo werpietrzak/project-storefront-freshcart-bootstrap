@@ -11,7 +11,7 @@ import { StoresService } from "../../services/stores.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StoreListGridComponent {
-  readonly stores$: Observable<StoreQueryModel[]> = this._storesService.getStores().pipe(
+  readonly stores$: Observable<StoreQueryModel[]> = this._storesService.getAllStores().pipe(
     map(stores => stores.map(store => ({
       name: store.name,
       logoUrl: store.logoUrl,
