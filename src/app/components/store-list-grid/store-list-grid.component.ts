@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { combineLatest, map, Observable } from "rxjs";
-import { StoreQueryModel } from "../../models/store.model";
+import { StoreQueryModel } from "../../queryModels/store-query.model";
 import { StoresService } from "../../services/stores.service";
 
 @Component({
