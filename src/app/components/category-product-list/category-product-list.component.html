@@ -17,21 +17,27 @@
             </li>
           </ul>
         </div>
-        <!-- filter by store -->
-        <!-- <div class="mb-8">
+          <!-- filter by store -->
+        <div class="mb-8">
           <h5 class="mb-3">Stores</h5>
-          <div class="my-4">
-            <input type="search" class="form-control" placeholder="Search by store">
-          </div>
+          <!-- <div class="my-4">
+             <input type="search" class="form-control" placeholder="Search by store">
+           </div> -->
           <div *ngFor="let store of stores$ | async" class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" value="" [id]="store.name">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [value]="store.id"
+              [id]="store.name"
+              (click)="updateSelectedStores(store.id, $event)"
+            >
             <label class="form-check-label" [for]="store.name">
               {{store.name}}
             </label>
           </div>
-        </div> -->
-        <!-- filter by price -->
+        </div>
         <form [formGroup]="filterForm">
+          <!-- filter by price -->
           <div class="mb-8">
             <h5 class="mb-3">Price</h5>
             <div>
