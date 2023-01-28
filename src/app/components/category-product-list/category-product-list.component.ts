@@ -36,19 +36,20 @@ export class CategoryProductListComponent {
 
   readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
 
-  readonly starRatings$: Observable<number[][]> = of([5, 4, 3, 2, 1].map(
+  readonly starRatings$: Observable<{ value: number, stars: number[] }[]> = of([5, 4, 3, 2, 1].map(
     a => {
       const result = Array(5).fill(0);
       for (let i = 0; i < a; i++) {
         result[i] = 1;
       }
-      return result
+      return { value: a, stars: result }
     }
   ));
 
   readonly filterForm: FormGroup = new FormGroup({
     priceFrom: new FormControl('', [Validators.pattern("^[0-9]*$")]),
     priceTo: new FormControl('', [Validators.pattern("^[0-9]*$")]),
+    rating: new FormControl(),
   });
 
   readonly sortingForm: FormControl = new FormControl();
@@ -73,12 +74,13 @@ export class CategoryProductListComponent {
     ),
   ]).pipe(
     map(([category, products, filters]) => {
-      const { priceFrom, priceTo } = filters;
+      const { priceFrom, priceTo, rating } = filters;
       return products
         .reduce((acc: ProductQueryModel[], cur) => (
           cur.categoryId === category.id &&
           (!priceFrom || !priceFrom.length || cur.price >= +priceFrom) &&
-          (!priceTo || cur.price <= +priceTo) ?
+          (!priceTo || cur.price <= +priceTo) &&
+          (!rating || Math.floor(cur.ratingValue) === rating) ?
             [...acc, {
               name: cur.name,
               price: cur.price,
