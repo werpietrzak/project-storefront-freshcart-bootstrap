@@ -20,9 +20,14 @@
           <!-- filter by store -->
         <div class="mb-8">
           <h5 class="mb-3">Stores</h5>
-          <!-- <div class="my-4">
-             <input type="search" class="form-control" placeholder="Search by store">
-           </div> -->
+          <div class="my-4">
+            <input
+              type="search"
+              class="form-control"
+              placeholder="Search by store"
+              [formControl]="storeFilter"
+            >
+          </div>
           <div *ngFor="let store of stores$ | async" class="form-check mb-2">
             <input
               class="form-check-input"

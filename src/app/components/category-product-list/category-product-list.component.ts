@@ -46,7 +46,16 @@ export class CategoryProductListComponent {
     switchMap(params => this._categoriesService.getOneCategory(params['categoryId']))
   );
 
-  readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
+  readonly storeFilter: FormControl = new FormControl('');
+
+  readonly stores$: Observable<StoreModel[]> = combineLatest([
+    this._storesService.getAllStores(),
+    this.storeFilter.valueChanges.pipe(startWith('')),
+  ]).pipe(
+    map(([stores, query]) => stores.filter(
+      store => store.name.toLowerCase().includes(query.toLowerCase())
+    ))
+  );
 
   readonly starRatings$: Observable<{ value: number, stars: number[] }[]> = of([5, 4, 3, 2, 1].map(
     a => {
