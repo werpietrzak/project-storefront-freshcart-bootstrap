@@ -8,6 +8,7 @@ import {
 } from "./components/category-product-list/category-product-list.component-module";
 import { StoreProductListComponent } from "./components/store-product-list/store-product-list.component";
 import { StoreProductListComponentModule } from "./components/store-product-list/store-product-list.component-module";
+import { ProductsServiceModule } from "./services/products.service-module";
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
@@ -22,6 +23,7 @@ const routes: Routes = [
     HomepageComponentModule,
     CategoryProductListComponentModule,
     StoreProductListComponentModule,
+    ProductsServiceModule,
   ],
 })
 export class AppRoutingModule {}
