@@ -1,0 +1,56 @@
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="col-12 mb-6">
+      <h3 class="mb-1">
+        Stores
+      </h3>
+    </div>
+    <ng-container *ngIf="stores$ | async as stores">
+      <div class="col-12">
+        <div class="mb-4">
+          <h6>
+            We have <span class="text-primary">{{stores.length}}</span> vendors now
+          </h6>
+        </div>
+      </div>
+      <div class="row row-cols-3 g-4">
+        <div *ngFor="let store of stores" class="col">
+          <div class="card flex-row p-8 card-product">
+            <div>
+              <img [src]="store.logoUrl" [alt]="store.name" class="rounded-circle icon-shape icon-xl">
+            </div>
+            <div class="ms-6">
+              <h5 class="mb-1">
+                <a [routerLink]="'stores/' + store.id" class="text-inherit">
+                  {{store.name}}
+                </a>
+              </h5>
+              <div class="small text-muted">
+                <ng-container *ngFor="let item of store.tagIds; last as last">
+                  <span>{{item}}</span>
+                  <span *ngIf="!last" class="mx-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="4"
+                      height="4"
+                      fill="#C1C7C6"
+                      class="bi bi-circle-fill align-middle"
+                      viewBox="0 0 16 16"
+                    >
+                      <circle cx="8" cy="8" r="8" />
+                    </svg>
+                  </span>
+                </ng-container>
+              </div>
+              <div>
+                <div class="badge text-bg-light border">
+                  {{store.distance}} km
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</section>
