@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take, tap } from "rxjs";
+import { combineLatest, debounceTime, map, Observable, of, shareReplay, startWith, switchMap, take, tap } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { CategoriesService } from "../../services/categories.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ProductsService } from "../../services/products.service";
 import { ProductQueryModel } from "../../queryModels/product-query.model";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { StoreModel } from "../../models/store.model";
+import { StoresService } from "../../services/stores.service";
 import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
 import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
 
@@ -31,7 +33,24 @@ export class CategoryProductListComponent {
     switchMap(params => this._categoriesService.getOneCategory(params['categoryId']))
   );
 
-  readonly sortingForm: FormControl = new FormControl({ value: '', property: 'id' });
+  readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
+
+  readonly starRatings$: Observable<number[][]> = of([5, 4, 3, 2, 1].map(
+    a => {
+      const result = Array(5).fill(0);
+      for (let i = 0; i < a; i++) {
+        result[i] = 1;
+      }
+      return result
+    }
+  ));
+
+  readonly filterForm: FormGroup = new FormGroup({
+    priceFrom: new FormControl('', [Validators.pattern("^[0-9]*$")]),
+    priceTo: new FormControl('', [Validators.pattern("^[0-9]*$")]),
+  });
+
+  readonly sortingForm: FormControl = new FormControl();
 
   readonly sortingOptions$: Observable<SortingOptionQueryModel[]> = of([
     { label: 'Featured', value: 'desc', property: 'featureValue' },
@@ -43,23 +62,30 @@ export class CategoryProductListComponent {
   readonly products$: Observable<ProductQueryModel[]> = combineLatest([
     this.selectedCategory$,
     this._productsService.getAllProducts(),
-    this.sortingForm.valueChanges.pipe(
-      startWith({ value: '', property: '' }),
+    this.filterForm.valueChanges.pipe(
+      startWith({ priceFrom: '', priceTo: '' }),
+      debounceTime(500),
     ),
   ]).pipe(
-    map(([category, products]) => products
-      .reduce((acc: ProductQueryModel[], cur) => (
-        cur.categoryId === category.id ? [...acc, {
-          name: cur.name,
-          price: cur.price,
-          category: category.name,
-          ratingValue: cur.ratingValue,
-          ratingCount: cur.ratingCount,
-          ratingStars: this.convertRatingToStars(cur.ratingValue),
-          featureValue: cur.featureValue,
-          imageUrl: cur.imageUrl,
-          id: cur.id,
-        }] : acc), [])
+    map(([category, products, filters]) => {
+      const { priceFrom, priceTo } = filters;
+      return products
+        .reduce((acc: ProductQueryModel[], cur) => (
+          cur.categoryId === category.id &&
+          (!priceFrom || !priceFrom.length || cur.price >= +priceFrom) &&
+          (!priceTo || cur.price <= +priceTo) ?
+            [...acc, {
+              name: cur.name,
+              price: cur.price,
+              category: category.name,
+              ratingValue: cur.ratingValue,
+              ratingCount: cur.ratingCount,
+              ratingStars: this.convertRatingToStars(cur.ratingValue),
+              featureValue: cur.featureValue,
+              imageUrl: cur.imageUrl,
+              id: cur.id,
+            }] : acc), [])
+      }
     )
   );
 
@@ -102,6 +128,7 @@ export class CategoryProductListComponent {
 
   constructor(
     private _categoriesService: CategoriesService,
+    private _storesService: StoresService,
     private _productsService: ProductsService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
