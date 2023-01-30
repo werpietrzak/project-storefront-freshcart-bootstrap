@@ -207,32 +207,4 @@ export class CategoryProductListComponent {
     }
     return result;
   }
-
-  setItemsPerPage(value: number): void {
-    combineLatest([
-      this.queryParams$,
-      this.products$,
-    ]).pipe(
-      take(1),
-      tap(([params, products]) => {
-        this._router.navigate([], { queryParams: {
-            pageNumber: params.page > Math.ceil(products.length / value) ?
-              Math.ceil(products.length / value) : params.page,
-            itemsPerPage: value,
-          }})
-      })
-    ).subscribe();
-  }
-
-  setPage(value: number): void {
-    this.queryParams$.pipe(
-      take(1),
-      tap(params => {
-        this._router.navigate([], { queryParams: {
-            page: value,
-            itemsPerPage: params.itemsPerPage,
-          }})
-      })
-    ).subscribe();
-  }
 }
