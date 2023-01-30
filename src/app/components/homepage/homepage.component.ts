@@ -8,4 +8,5 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomepageComponent {
+  readonly featuredCategoriesIds$ = ['5', '2'];
 }

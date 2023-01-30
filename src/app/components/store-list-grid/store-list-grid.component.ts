@@ -15,13 +15,19 @@ export class StoreListGridComponent {
     this._storesService.getAllStores(),
     this._storesService.getAllStoreTags(),
   ]).pipe(
-    map(([stores, tags]) => stores.map(store => ({
-      name: store.name,
-      logoUrl: store.logoUrl,
-      distance: +(store.distanceInMeters / 1000).toFixed(1),
-      tagIds: store.tagIds.map(tag => tags.find(a => a.id === tag)?.name || ''),
-      id: store.id,
-    })))
+    map(([stores, tags]) => stores.map(store => {
+      const tagsMap = tags.reduce((acc, cur) => {
+        acc[cur.id] = cur.name;
+        return acc;
+      }, {} as { [id: string]: string });
+      return {
+        name: store.name,
+        logoUrl: store.logoUrl,
+        distance: +(store.distanceInMeters / 1000).toFixed(1),
+        tagIds: store.tagIds.map(tagId => tagsMap[tagId]),
+        id: store.id,
+      }
+    }))
   );
 
   constructor(private _storesService: StoresService) {}

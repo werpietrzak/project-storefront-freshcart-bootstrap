@@ -48,6 +48,9 @@ export class CategoryProductListComponent {
   readonly products$: Observable<ProductQueryModel[]> = combineLatest([
     this.selectedCategory$,
     this._productsService.getAllProducts(),
+    this.sortingForm.valueChanges.pipe(
+      startWith({ value: '', property: '' }),
+    ),
   ]).pipe(
     map(([category, products]) => products
       .reduce((acc: ProductQueryModel[], cur) => (
