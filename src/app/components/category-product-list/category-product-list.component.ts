@@ -6,6 +6,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ProductsService } from "../../services/products.service";
 import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { FormControl, FormGroup } from "@angular/forms";
+import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
+import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
 
 @Component({
   selector: 'app-category-product-list',
@@ -15,10 +17,7 @@ import { FormControl, FormGroup } from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoryProductListComponent {
-  readonly queryParams$: Observable<{
-    page: number,
-    itemsPerPage: number,
-  }> = this._activatedRoute.queryParams.pipe(
+  readonly queryParams$: Observable<PaginationQueryModel> = this._activatedRoute.queryParams.pipe(
     map(params => ({
       page: params['page'] ? +params['page'] : 1,
       itemsPerPage: params['itemsPerPage'] ? +params['itemsPerPage'] : 5,
@@ -34,11 +33,7 @@ export class CategoryProductListComponent {
 
   readonly sortingForm: FormControl = new FormControl({ value: '', property: 'id' });
 
-  readonly sortingOptions$: Observable<{
-    label: string,
-    value: string,
-    property: keyof ProductQueryModel
-  }[]> = of([
+  readonly sortingOptions$: Observable<SortingOptionQueryModel[]> = of([
     { label: 'Featured', value: 'desc', property: 'featureValue' },
     { label: 'Price: Low to High', value: 'asc', property: 'price' },
     { label: 'Price: High to Low', value: 'desc', property: 'price' },
