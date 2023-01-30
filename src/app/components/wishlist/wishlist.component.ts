@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import {BehaviorSubject, combineLatest, map, Observable} from "rxjs";
-import {ProductModel} from "../../models/product.model";
-import {ProductsService} from "../../services/products.service";
+import { combineLatest, map, Observable } from "rxjs";
+import { ProductModel } from "../../models/product.model";
+import { ProductsService } from "../../services/products.service";
+import { WishlistStore } from "../../stores/wishlist.store";
 
 @Component({
   selector: 'app-wishlist',
@@ -11,24 +12,23 @@ import {ProductsService} from "../../services/products.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WishlistComponent {
-  private _wishlistedProductsIdsSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(['1', '2', '3']);
-
-  readonly wishlistedProductsIds$: Observable<string[]> = this._wishlistedProductsIdsSubject.asObservable();
-
   private _products$: Observable<ProductModel[]> = this._productsService.getAllProducts();
 
   public wishlistedProducts$: Observable<ProductModel[]> = combineLatest([
     this._products$,
-    this.wishlistedProductsIds$,
+    this._wishlistStore.productsIds$,
   ]).pipe(
     map(([products, selectedIds]) => products.filter(product => selectedIds.includes(product.id)))
   );
 
-  constructor(private _productsService: ProductsService) {}
+  constructor(
+    private _productsService: ProductsService,
+    private _wishlistStore: WishlistStore,
+  ) {}
 
   removeFromWishlist(productId: string) {
-    this._wishlistedProductsIdsSubject.next(
-      this._wishlistedProductsIdsSubject.value.filter(a => a !== productId)
+    this._wishlistStore.productsIdsSubject.next(
+      this._wishlistStore.productsIdsSubject.value.filter(a => a !== productId)
     );
   }
 }

@@ -11,6 +11,7 @@ import { StoreProductListComponentModule } from "./components/store-product-list
 import { ProductsServiceModule } from "./services/products.service-module";
 import { WishlistComponent } from "./components/wishlist/wishlist.component";
 import { WishlistComponentModule } from "./components/wishlist/wishlist.component-module";
+import { WishlistStoreModule } from "./stores/wishlist.store-module";
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
     StoreProductListComponentModule,
     ProductsServiceModule,
     WishlistComponentModule,
+    WishlistStoreModule,
   ],
 })
 export class AppRoutingModule {}

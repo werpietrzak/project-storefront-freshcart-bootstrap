@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { CategoriesService } from "../../services/categories.service";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, map, Observable } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
+import { WishlistStore } from "../../stores/wishlist.store";
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,14 @@ export class HeaderComponent {
 
   readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
-  constructor(private _categoriesService: CategoriesService) {}
+  readonly wishlistItems$: Observable<number> = this._wishlistStore.productsIds$.pipe(
+    map(products => products.length)
+  );
+
+  constructor(
+    private _wishlistStore: WishlistStore,
+    private _categoriesService: CategoriesService
+  ) {}
 
   toggleMenu(): void {
     this._mobileMenuToggleSubject.next(!this._mobileMenuToggleSubject.value);

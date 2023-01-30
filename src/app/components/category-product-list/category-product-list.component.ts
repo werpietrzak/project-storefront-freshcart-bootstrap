@@ -20,6 +20,7 @@ import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { StoreModel } from "../../models/store.model";
 import { StoresService } from "../../services/stores.service";
+import { WishlistStore } from "../../stores/wishlist.store";
 
 @Component({
   selector: 'app-category-product-list',
@@ -98,8 +99,9 @@ export class CategoryProductListComponent {
       debounceTime(500),
     ),
     this.selectedStores$,
+    this._wishlistStore.productsIds$,
   ]).pipe(
-    map(([category, products, filters, storeIds]) => {
+    map(([category, products, filters, storeIds, wishlist]) => {
       const { priceFrom, priceTo, rating } = filters;
       return products
         .reduce((acc: ProductQueryModel[], cur) => (
@@ -118,6 +120,7 @@ export class CategoryProductListComponent {
               featureValue: cur.featureValue,
               imageUrl: cur.imageUrl,
               id: cur.id,
+              isWishlisted: wishlist.includes(cur.id),
             }] : acc), [])
       }
     )
@@ -161,6 +164,7 @@ export class CategoryProductListComponent {
   );
 
   constructor(
+    private _wishlistStore: WishlistStore,
     private _categoriesService: CategoriesService,
     private _storesService: StoresService,
     private _productsService: ProductsService,
@@ -206,6 +210,14 @@ export class CategoryProductListComponent {
     if (!event.target.checked && selectedStores.includes(storeId)) {
       this._selectedStoresSubject.next(selectedStores.filter(a => a !== storeId));
     }
+  }
+
+  public updateWishlist(productId: string) {
+    const wishlistProducts = [...this._wishlistStore.productsIdsSubject.value];
+    this._wishlistStore.productsIdsSubject.next(
+      wishlistProducts.includes(productId) ?
+      wishlistProducts.filter(a => a !== productId) : [...wishlistProducts, productId]
+    );
   }
 
   private convertRatingToStars(rating: number): number[] {
