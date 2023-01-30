@@ -120,53 +120,6 @@ export class CategoryProductListComponent {
     this.queryParams$,
     this.products$
   ]).pipe(
-    map(([category, products]) => products
-      .reduce((acc: ProductQueryModel[], cur) => (
-        cur.categoryId === category.id ? [...acc, {
-          name: cur.name,
-          price: cur.price,
-          category: category.name,
-          ratingValue: cur.ratingValue,
-          ratingCount: cur.ratingCount,
-          ratingStars: this.convertRatingToStars(cur.ratingValue),
-          featureValue: cur.featureValue,
-          imageUrl: cur.imageUrl,
-          id: cur.id,
-        }] : acc), [])
-    )
-  );
-
-  readonly displayedProducts$: Observable<ProductQueryModel[]> = combineLatest([
-    this.products$,
-    this.sortingForm.valueChanges.pipe(
-      startWith({ value: '', property: '' }),
-    ),
-    this.queryParams$,
-  ]).pipe(
-    map(([products, order, params]) => {
-        const sliceStart = params.itemsPerPage * (params.page - 1);
-        return products
-          .sort((a, b) => {
-            const {value, property}: { value: string, property: keyof ProductQueryModel } = order;
-            return value === 'asc' ? +a[property] - +b[property] :
-              (value === 'desc' ? +b[property] - +a[property] : 0);
-          })
-          .slice(sliceStart, sliceStart + params.itemsPerPage)
-      }
-    )
-  );
-
-  readonly paginationForm: FormGroup = new FormGroup({
-    itemsPerPage: new FormControl(),
-    page: new FormControl(),
-  });
-
-  readonly itemsPerPageValues$: Observable<number[]> = of([5, 10, 15]);
-
-  readonly pages$: Observable<number[]> = combineLatest([
-    this.queryParams$,
-    this.products$
-  ]).pipe(
     map(([params, products]) => (
       [...Array(Math.ceil(products.length / params.itemsPerPage)).keys()].map(a => ++a)
       )
