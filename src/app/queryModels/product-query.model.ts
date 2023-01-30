@@ -5,6 +5,7 @@ export interface ProductQueryModel {
   ratingValue: number;
   ratingCount: number;
   ratingStars: number[];
+  featureValue: number;
   imageUrl: string;
   id: string;
 }
