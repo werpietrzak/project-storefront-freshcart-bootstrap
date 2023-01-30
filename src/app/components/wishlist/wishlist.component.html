@@ -1,1 +1,74 @@
-<h1>wishlist</h1>
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="row">
+      <!-- header -->
+      <div class="col-12 mb-6">
+        <h3 class="mb-1">
+          Wishlist
+        </h3>
+      </div>
+      <!-- products -->
+      <div *ngFor="let product of wishlistedProducts$ | async" class="card card-product">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-4 col-12">
+              <div class="text-center position-relative">
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                  class="mb-3 img-fluid"
+                >
+              </div>
+            </div>
+            <div class="col-md-8 col-12 flex-grow-1">
+              <div class="text-small mb-1">
+                <small>{{product.categoryId}}</small>
+              </div>
+              <h2 class="fs-6">
+                <a href="/" class="text-inherit text-decoration-none">
+                  {{product.name}}
+                </a>
+              </h2>
+              <div>
+                <small class="text-warning">
+                  <!--<i
+                    *ngFor="let val of product.ratingStars"
+                    class="bi"
+                    [ngClass]="{
+                          'bi-star-fill': val === 1,
+                          'bi-star': val === 0,
+                          'bi-star-half': val > 0 && val < 1
+                          }"
+                  ></i> -->
+                </small>
+                <span class="text-muted small">
+                  {{product.ratingValue}}({{product.ratingCount}})
+                </span>
+              </div>
+              <div class="mt-6">
+                <div>
+                  <span class="text-dark">
+                    {{product.price | currency}}
+                  </span>
+                </div>
+              </div>
+              <!-- wishlist button -->
+              <div class="mt-3">
+                <a
+                  class="btn btn-icon btn-sm btn-outline-gray-400 text-muted"
+                  data-bs-toggle="tooltip"
+                  data-bs-html="true"
+                  aria-label="Wishlist"
+                  data-bs-original-title="Wishlist"
+                  aria-describedby="tooltip680637"
+                >
+                  <i class="bi bi-heart" (click)="removeFromWishlist(product.id)"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
