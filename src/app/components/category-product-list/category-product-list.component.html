@@ -1,0 +1,91 @@
+<section class="my-8">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-3 col-md-4 mb-4 mb-md-0">
+        <div class="mb-8">
+          <h5 class="mb-3">
+            Categories
+          </h5>
+          <ul class="nav nav-category">
+            <li
+              class="nav-item border-bottom w-100"
+              *ngFor="let category of categories$ | async"
+            >
+              <a [routerLink]="'/categories/' + category.id" class="nav-link">
+                {{category.name}} <i class="feather-icon icon-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="selectedCategory$ | async as selectedCategory" class="col-12 col-lg-9 col-md-8">
+        <div class="card mb-4 bg-light border-0">
+          <div class="card-body p-9">
+            <h2 class="mb-0 fs-1">
+              {{selectedCategory.name}}
+            </h2>
+          </div>
+        </div>
+        <ng-container *ngIf="products$ | async as products">
+          <div class="d-lg-flex justify-content-between align-items-center">
+            <div class="mb-3 mb-lg-0">
+              <p class="mb-0">
+                <span class="text-dark">{{products.length}}</span> products found
+              </p>
+            </div>
+          </div>
+          <div class="row g-4 row-cols-1 mt-2">
+            <div *ngFor="let product of products" class="card card-product">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-md-4 col-12">
+                    <div class="text-center position-relative">
+                      <img
+                        [src]="product.imageUrl"
+                        [alt]="product.name"
+                        class="mb-3 img-fluid"
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-12 flex-grow-1">
+                    <div class="text-small mb-1">
+                      <small>{{product.category}}</small>
+                    </div>
+                    <h2 class="fs-6">
+                      <a href="/" class="text-inherit text-decoration-none">
+                        {{product.name}}
+                      </a>
+                    </h2>
+                    <div>
+                      <small class="text-warning">
+                        <i
+                          *ngFor="let val of product.ratingStars"
+                          class="bi"
+                          [ngClass]="{
+                          'bi-star-fill': val === 1,
+                          'bi-star': val === 0,
+                          'bi-star-half': val > 0 && val < 1
+                          }"
+                        ></i>
+                      </small>
+                      <span class="text-muted small">
+                        {{product.ratingValue}}({{product.ratingCount}})
+                      </span>
+                    </div>
+                    <div class="mt-6">
+                      <div>
+                        <span class="text-dark">
+                          {{product.price | currency}}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>
