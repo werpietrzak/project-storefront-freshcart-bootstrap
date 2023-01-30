@@ -5,3 +5,8 @@ export interface StoreModel {
   tagIds: string[];
   id: string;
 }
+
+export interface StoreTagModel {
+  id: string;
+  name: string;
+}
