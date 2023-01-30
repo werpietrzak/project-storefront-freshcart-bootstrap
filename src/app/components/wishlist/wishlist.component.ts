@@ -12,23 +12,16 @@ import { WishlistStore } from "../../stores/wishlist.store";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WishlistComponent {
-  private _products$: Observable<ProductModel[]> = this._productsService.getAllProducts();
-
-  public wishlistedProducts$: Observable<ProductModel[]> = combineLatest([
-    this._products$,
-    this._wishlistStore.productsIds$,
+  public wishlistProducts$: Observable<ProductModel[]> = combineLatest([
+    this._productsService.getAllProducts(),
+    this._wishlistStoreService.productsIds$,
   ]).pipe(
-    map(([products, selectedIds]) => products.filter(product => selectedIds.includes(product.id)))
+    map(([products, selectedIds]) => products.filter(product => selectedIds.includes(product.id))
+    )
   );
 
   constructor(
     private _productsService: ProductsService,
-    private _wishlistStore: WishlistStore,
+    private _wishlistStoreService: WishlistStore,
   ) {}
-
-  removeFromWishlist(productId: string) {
-    this._wishlistStore.productsIdsSubject.next(
-      this._wishlistStore.productsIdsSubject.value.filter(a => a !== productId)
-    );
-  }
 }
