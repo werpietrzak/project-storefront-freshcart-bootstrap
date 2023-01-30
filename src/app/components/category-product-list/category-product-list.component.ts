@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { combineLatest, map, Observable, of, startWith, switchMap } from "rxjs";
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take, tap } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { CategoriesService } from "../../services/categories.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ProductsService } from "../../services/products.service";
 import { ProductQueryModel } from "../../queryModels/product-query.model";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
+import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
+import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
 
 @Component({
   selector: 'app-category-product-list',
@@ -15,6 +17,14 @@ import { FormControl } from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoryProductListComponent {
+  readonly queryParams$: Observable<PaginationQueryModel> = this._activatedRoute.queryParams.pipe(
+    map(params => ({
+      page: params['page'] ? +params['page'] : 1,
+      itemsPerPage: params['itemsPerPage'] ? +params['itemsPerPage'] : 5,
+    })),
+    shareReplay(1),
+  );
+
   readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
   readonly selectedCategory$: Observable<CategoryModel> = this._activatedRoute.params.pipe(
@@ -23,11 +33,7 @@ export class CategoryProductListComponent {
 
   readonly sortingForm: FormControl = new FormControl({ value: '', property: 'id' });
 
-  readonly sortingOptions$: Observable<{
-    label: string,
-    value: string,
-    property: keyof ProductQueryModel
-  }[]> = of([
+  readonly sortingOptions$: Observable<SortingOptionQueryModel[]> = of([
     { label: 'Featured', value: 'desc', property: 'featureValue' },
     { label: 'Price: Low to High', value: 'asc', property: 'price' },
     { label: 'Price: High to Low', value: 'desc', property: 'price' },
@@ -41,7 +47,7 @@ export class CategoryProductListComponent {
       startWith({ value: '', property: '' }),
     ),
   ]).pipe(
-    map(([category, products, order]) => products
+    map(([category, products]) => products
       .reduce((acc: ProductQueryModel[], cur) => (
         cur.categoryId === category.id ? [...acc, {
           name: cur.name,
@@ -54,10 +60,43 @@ export class CategoryProductListComponent {
           imageUrl: cur.imageUrl,
           id: cur.id,
         }] : acc), [])
-      .sort((a, b) => {
-        const { value, property }: { value: string, property: keyof ProductQueryModel} = order;
-        return value === 'asc' ? +a[property] - +b[property] : (value === 'desc' ? +b[property] - +a[property] : 0);
-      }),
+    )
+  );
+
+  readonly displayedProducts$: Observable<ProductQueryModel[]> = combineLatest([
+    this.products$,
+    this.sortingForm.valueChanges.pipe(
+      startWith({ value: '', property: '' }),
+    ),
+    this.queryParams$,
+  ]).pipe(
+    map(([products, order, params]) => {
+        const sliceStart = params.itemsPerPage * (params.page - 1);
+        return products
+          .sort((a, b) => {
+            const {value, property}: { value: string, property: keyof ProductQueryModel } = order;
+            return value === 'asc' ? +a[property] - +b[property] :
+              (value === 'desc' ? +b[property] - +a[property] : 0);
+          })
+          .slice(sliceStart, sliceStart + params.itemsPerPage)
+      }
+    )
+  );
+
+  readonly paginationForm: FormGroup = new FormGroup({
+    itemsPerPage: new FormControl(),
+    page: new FormControl(),
+  });
+
+  readonly itemsPerPageValues$: Observable<number[]> = of([5, 10, 15]);
+
+  readonly pages$: Observable<number[]> = combineLatest([
+    this.queryParams$,
+    this.products$
+  ]).pipe(
+    map(([params, products]) => (
+      [...Array(Math.ceil(products.length / params.itemsPerPage)).keys()].map(a => ++a)
+      )
     )
   );
 
@@ -65,6 +104,7 @@ export class CategoryProductListComponent {
     private _categoriesService: CategoriesService,
     private _productsService: ProductsService,
     private _activatedRoute: ActivatedRoute,
+    private _router: Router,
     ) {}
 
   private convertRatingToStars(rating: number): number[] {
@@ -79,5 +119,33 @@ export class CategoryProductListComponent {
       }
     }
     return result;
+  }
+
+  setItemsPerPage(value: number): void {
+    combineLatest([
+      this.queryParams$,
+      this.products$,
+    ]).pipe(
+      take(1),
+      tap(([params, products]) => {
+        this._router.navigate([], { queryParams: {
+            pageNumber: params.page > Math.ceil(products.length / value) ?
+              Math.ceil(products.length / value) : params.page,
+            itemsPerPage: value,
+          }})
+      })
+    ).subscribe();
+  }
+
+  setPage(value: number): void {
+    this.queryParams$.pipe(
+      take(1),
+      tap(params => {
+        this._router.navigate([], { queryParams: {
+            page: value,
+            itemsPerPage: params.itemsPerPage,
+          }})
+      })
+    ).subscribe();
   }
 }
