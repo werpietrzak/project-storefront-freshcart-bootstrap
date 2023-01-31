@@ -56,7 +56,7 @@ export class CartComponent {
     const index = cartItems.findIndex(entry => entry.productId === productId);
 
     if (value === '-' && cartItems[index].quantity === 1) {
-      this._cartStoreService.updateCartProducts(cartItems.filter(item => item.productId !== productId));
+      this.removeFromCart(productId);
     } else {
       cartItems[index] = {
         productId,
@@ -64,5 +64,11 @@ export class CartComponent {
       };
       this._cartStoreService.updateCartProducts(cartItems);
     }
+  }
+
+  public removeFromCart(productId: string): void {
+    this._cartStoreService.updateCartProducts(
+      this._cartStoreService.getCartProducts.filter(item => item.productId !== productId)
+    );
   }
 }
