@@ -13,7 +13,6 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { StoresServiceModule } from "./services/stores.service-module";
 import { CategoriesStoreServiceModule } from "./services/categories-store.service-module";
 import { ProductsServiceModule } from "./services/products.service-module";
-import { CategoriesStoreServiceModule } from "./services/categories-store.service-module";
 
 @NgModule({
   declarations: [AppComponent],

@@ -12,12 +12,15 @@ import { ProductsServiceModule } from "./services/products.service-module";
 import { WishlistComponent } from "./components/wishlist/wishlist.component";
 import { WishlistComponentModule } from "./components/wishlist/wishlist.component-module";
 import { WishlistStoreModule } from "./stores/wishlist.store-module";
+import { CartComponent } from "./components/cart/cart.component";
+import { CartComponentModule } from "./components/cart/cart.component-module";
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
   { path: 'categories/:categoryId', component: CategoryProductListComponent },
   { path: 'stores/:storeId', component: StoreProductListComponent },
   { path: 'wishlist', component: WishlistComponent },
+  { path: 'cart', component: CartComponent },
 ];
 
 @NgModule({
@@ -30,6 +33,7 @@ const routes: Routes = [
     ProductsServiceModule,
     WishlistComponentModule,
     WishlistStoreModule,
+    CartComponentModule,
   ],
 })
 export class AppRoutingModule {}
