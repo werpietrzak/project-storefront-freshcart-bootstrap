@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { CategoriesService } from "../../services/categories.service";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { StoresService } from "../../services/stores.service";
 import { StoreModel } from "../../models/store.model";
@@ -16,6 +16,14 @@ export class FooterComponent {
   readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
 
   readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
+
+  readonly getToKnowUs$: Observable<string[]> = of([
+    'Company',
+    'About',
+    'Blog',
+    'Help Center',
+    'Our Value',
+  ]);
 
   constructor(
     private _categoriesService: CategoriesService,
