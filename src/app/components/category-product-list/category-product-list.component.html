@@ -108,12 +108,12 @@
               </div>
             </div>
           </div>
-          <div class="row g-4 row-cols-1 mt-2">
+          <div *ngIf="displayedProducts$ | async as displayedProducts" class="row g-4 row-cols-1 mt-2">
             <app-product-card
-              *ngFor="let product of displayedProducts$ | async"
+              *ngFor="let product of displayedProducts"
               [product]="product"
             ></app-product-card>
-            <div class="row mt-8">
+            <div *ngIf="displayedProducts.length" class="row mt-8">
             <!-- items per page -->
               <div class="col-6">
                 <h6 class="mb-2">

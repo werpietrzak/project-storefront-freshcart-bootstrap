@@ -107,25 +107,37 @@ export class CategoryProductListComponent {
             (!storeIds?.length || product.storeIds.some(storeId => storeIds.includes(storeId)))
           ))
       }
-    )
+    ),
+    tap(() => {
+      this.setPage(1)
+    })
   );
 
-  readonly displayedProducts$: Observable<ProductModel[]> = combineLatest([
+  readonly sortedProducts$: Observable<ProductModel[]> = combineLatest([
     this.products$,
     this.sortingForm.valueChanges.pipe(
       startWith({ value: '', property: '' }),
     ),
+  ]).pipe(
+    map(([products, order]) => (
+      products.sort((a, b) => {
+        const {value, property}: { value: string, property: keyof ProductModel } = order;
+        return value === 'asc' ? +a[property] - +b[property] :
+          (value === 'desc' ? +b[property] - +a[property] : 0);
+      }))
+    ),
+    tap(() => {
+      this.setPage(1)
+    })
+  );
+
+  readonly displayedProducts$: Observable<ProductModel[]> = combineLatest([
+    this.sortedProducts$,
     this.queryParams$,
   ]).pipe(
-    map(([products, order, params]) => {
+    map(([products, params]) => {
         const sliceStart = params.itemsPerPage * (params.page - 1);
-        return products
-          .sort((a, b) => {
-            const {value, property}: { value: string, property: keyof ProductModel } = order;
-            return value === 'asc' ? +a[property] - +b[property] :
-              (value === 'desc' ? +b[property] - +a[property] : 0);
-          })
-          .slice(sliceStart, sliceStart + params.itemsPerPage)
+        return products.slice(sliceStart, sliceStart + params.itemsPerPage);
       }
     )
   );
@@ -156,7 +168,7 @@ export class CategoryProductListComponent {
     private _router: Router,
     ) {}
 
-  setItemsPerPage(value: number): void {
+  public setItemsPerPage(value: number): void {
     combineLatest([
       this.queryParams$,
       this.products$,
@@ -172,7 +184,7 @@ export class CategoryProductListComponent {
     ).subscribe();
   }
 
-  setPage(value: number): void {
+  public setPage(value: number): void {
     this.queryParams$.pipe(
       take(1),
       tap(params => {
