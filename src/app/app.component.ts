@@ -19,5 +19,6 @@ export class AppComponent {
     this._categoriesStoreService.loadCategories();
     this._productsStoreService.loadProducts();
     this._storesStoreService.loadStores();
+    this._storesStoreService.loadStoreTags();
   }
 }

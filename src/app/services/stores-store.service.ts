@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from "rxjs";
 import { StoreModel } from "../models/store.model";
 import { StoresService } from "./stores.service";
+import { StoreTagModel } from "../models/store-tag.model";
 
 @Injectable()
 export class StoresStoreService {
@@ -9,15 +10,21 @@ export class StoresStoreService {
 
   public stores$: Observable<StoreModel[]> = this._storesSubject.asObservable();
 
-  constructor(private _storesService: StoresService) {}
+  private _storeTagsSubject: BehaviorSubject<StoreTagModel[]> = new BehaviorSubject<StoreTagModel[]>([]);
 
-  get getStores(): StoreModel[] {
-    return this._storesSubject.getValue();
-  }
+  public storeTags$: Observable<StoreTagModel[]> = this._storeTagsSubject.asObservable();
+
+  constructor(private _storesService: StoresService) {}
 
   public loadStores(): void {
     this._storesService.getAllStores().subscribe(data => {
       this._storesSubject.next(data);
+    });
+  }
+
+  public loadStoreTags(): void {
+    this._storesService.getAllStoreTags().subscribe(data => {
+      this._storeTagsSubject.next(data);
     });
   }
 }

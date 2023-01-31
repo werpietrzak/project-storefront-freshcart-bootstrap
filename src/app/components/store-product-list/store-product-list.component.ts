@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { ProductsService } from "../../services/products.service";
 import { ActivatedRoute } from "@angular/router";
-import { combineLatest, debounceTime, map, Observable, startWith, switchMap } from "rxjs";
+import { combineLatest, debounceTime, map, Observable, shareReplay, startWith, switchMap } from "rxjs";
 import { StoresService } from "../../services/stores.service";
 import { ProductModel } from "../../models/product.model";
 import { ProductWithNameImageQueryModel } from "../../queryModels/product-with-name-image.model";
-import {FormControl} from "@angular/forms";
-import {StoreQueryModel} from "../../queryModels/store-query.model";
+import { FormControl } from "@angular/forms";
+import { StoreQueryModel } from "../../queryModels/store-query.model";
+import { StoresStoreService } from "../../services/stores-store.service";
+import { ProductsStoreService } from "../../services/products-store.service";
 
 @Component({
   selector: 'app-store-product-list',
@@ -26,12 +27,13 @@ export class StoreProductListComponent {
       distance: +(store.distanceInMeters / 1000).toFixed(1),
       tagIds: store.tagIds,
       id: store.id,
-    }))
+    })),
+    shareReplay(1)
   );
 
   readonly products$: Observable<ProductWithNameImageQueryModel[]> = combineLatest([
     this.store$,
-    this._productsService.getAllProducts(),
+    this._productsStoreService.products$,
     this.searchForm.valueChanges.pipe(startWith('')),
   ]).pipe(
     debounceTime(500),
@@ -47,8 +49,9 @@ export class StoreProductListComponent {
   );
 
   constructor(
+    private _storesStoreService: StoresStoreService,
+    private _productsStoreService: ProductsStoreService,
     private _storesService: StoresService,
-    private _productsService: ProductsService,
     private _activatedRoute: ActivatedRoute,
     ) {}
 }

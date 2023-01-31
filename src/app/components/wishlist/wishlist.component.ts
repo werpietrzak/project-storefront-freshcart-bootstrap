@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { combineLatest, map, Observable } from "rxjs";
 import { ProductModel } from "../../models/product.model";
-import { ProductsService } from "../../services/products.service";
 import { WishlistStoreService } from "../../services/wishlist-store.service";
+import { ProductsStoreService } from "../../services/products-store.service";
 
 @Component({
   selector: 'app-wishlist',
@@ -13,7 +13,7 @@ import { WishlistStoreService } from "../../services/wishlist-store.service";
 })
 export class WishlistComponent {
   public wishlistProducts$: Observable<ProductModel[]> = combineLatest([
-    this._productsService.getAllProducts(),
+    this._productsStoreService.products$,
     this._wishlistStoreService.productsIds$,
   ]).pipe(
     map(([products, selectedIds]) => products.filter(product => selectedIds.includes(product.id))
@@ -21,7 +21,7 @@ export class WishlistComponent {
   );
 
   constructor(
-    private _productsService: ProductsService,
+    private _productsStoreService: ProductsStoreService,
     private _wishlistStoreService: WishlistStoreService,
   ) {}
 }

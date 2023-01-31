@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { CategoriesService } from "../../services/categories.service";
 import { BehaviorSubject, map, Observable } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { WishlistStoreService } from "../../services/wishlist-store.service";
@@ -32,7 +31,6 @@ export class HeaderComponent {
     private _cartStoreService: CartStoreService,
     private _categoriesStoreService: CategoriesStoreService,
     private _wishlistStore: WishlistStoreService,
-    private _categoriesService: CategoriesService
   ) {}
 
   toggleMenu(): void {

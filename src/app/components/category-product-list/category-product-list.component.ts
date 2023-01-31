@@ -15,14 +15,15 @@ import {
 import { CategoryModel } from "../../models/category.model";
 import { CategoriesService } from "../../services/categories.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ProductsService } from "../../services/products.service";
 import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { StoreModel } from "../../models/store.model";
-import { StoresService } from "../../services/stores.service";
 import { WishlistStoreService } from "../../services/wishlist-store.service";
 import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
 import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
+import { CategoriesStoreService } from "../../services/categories-store.service";
+import { StoresStoreService } from "../../services/stores-store.service";
+import { ProductsStoreService } from "../../services/products-store.service";
 
 @Component({
   selector: 'app-category-product-list',
@@ -40,16 +41,17 @@ export class CategoryProductListComponent {
     shareReplay(1),
   );
 
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesStoreService.categories$;
 
   readonly selectedCategory$: Observable<CategoryModel> = this._activatedRoute.params.pipe(
-    switchMap(params => this._categoriesService.getOneCategory(params['categoryId']))
+    switchMap(params => this._categoriesService.getOneCategory(params['categoryId'])),
+    shareReplay(1)
   );
 
   readonly storeFilter: FormControl = new FormControl('');
 
   readonly stores$: Observable<StoreModel[]> = combineLatest([
-    this._storesService.getAllStores(),
+    this._storesStoreService.stores$,
     this.storeFilter.valueChanges.pipe(startWith('')),
   ]).pipe(
     map(([stores, query]) => stores.filter(
@@ -88,7 +90,7 @@ export class CategoryProductListComponent {
 
   readonly products$: Observable<ProductQueryModel[]> = combineLatest([
     this.selectedCategory$,
-    this._productsService.getAllProducts(),
+    this._productsStoreService.products$,
     this.filterForm.valueChanges.pipe(
       startWith({ priceFrom: '', priceTo: '' }),
       debounceTime(500),
@@ -159,10 +161,11 @@ export class CategoryProductListComponent {
   );
 
   constructor(
+    private _categoriesStoreService: CategoriesStoreService,
+    private _productsStoreService: ProductsStoreService,
+    private _storesStoreService: StoresStoreService,
     private _wishlistStoreService: WishlistStoreService,
     private _categoriesService: CategoriesService,
-    private _storesService: StoresService,
-    private _productsService: ProductsService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
     ) {}
