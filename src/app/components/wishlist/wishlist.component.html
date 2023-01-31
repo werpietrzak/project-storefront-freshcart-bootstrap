@@ -1,4 +1,4 @@
-<section class="my-lg-14 my-8">
+<section class="my-lg-8 my-8">
   <div class="container">
     <div class="row">
       <!-- header -->
@@ -8,12 +8,17 @@
         </h3>
       </div>
       <!-- product cards -->
-      <div class="row g-4 row-cols-1 mt-2">
-        <app-product-card
-          *ngFor="let product of wishlistProducts$ | async"
-          [product]="product"
-        ></app-product-card>
-      </div>
+      <ng-container *ngIf="wishlistProducts$ | async as wishlistProducts">
+        <div *ngIf="wishlistProducts.length; else emptyState" class="row g-4 row-cols-1 mt-2">
+          <app-product-card
+            *ngFor="let product of wishlistProducts"
+            [product]="product"
+          ></app-product-card>
+        </div>
+        <ng-template #emptyState>
+          Your wishlist is empty.
+        </ng-template>
+      </ng-container>
     </div>
   </div>
 </section>
