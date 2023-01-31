@@ -20,7 +20,7 @@ import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { StoreModel } from "../../models/store.model";
 import { StoresService } from "../../services/stores.service";
-import { WishlistStore } from "../../stores/wishlist.store";
+import { WishlistStoreService } from "../../services/wishlist-store.service";
 import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
 import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
 
@@ -94,7 +94,7 @@ export class CategoryProductListComponent {
       debounceTime(500),
     ),
     this.selectedStores$,
-    this._wishlistStore.productsIds$,
+    this._wishlistStoreService.productsIds$,
   ]).pipe(
     map(([category, products, filters, storeIds, wishlist]) => {
       const { priceFrom, priceTo, rating } = filters;
@@ -159,7 +159,7 @@ export class CategoryProductListComponent {
   );
 
   constructor(
-    private _wishlistStore: WishlistStore,
+    private _wishlistStoreService: WishlistStoreService,
     private _categoriesService: CategoriesService,
     private _storesService: StoresService,
     private _productsService: ProductsService,
@@ -206,12 +206,12 @@ export class CategoryProductListComponent {
       this._selectedStoresSubject.next(selectedStores.filter(a => a !== storeId));
     }
   }
-  
+
   public updateWishlist(productId: string) {
-    const wishlistProducts = [...this._wishlistStore.productsIdsSubject.value];
-    this._wishlistStore.productsIdsSubject.next(
+    const wishlistProducts = this._wishlistStoreService.getWishlistItemsIds;
+    this._wishlistStoreService.updateWishlist(
       wishlistProducts.includes(productId) ?
-      wishlistProducts.filter(a => a !== productId) : [...wishlistProducts, productId]
+        wishlistProducts.filter(a => a !== productId) : [...wishlistProducts, productId]
     );
   }
 

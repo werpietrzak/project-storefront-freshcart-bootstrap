@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 import { combineLatest, map, Observable } from "rxjs";
 import { ProductModel } from "../../models/product.model";
 import { ProductsService } from "../../services/products.service";
-import { WishlistStore } from "../../stores/wishlist.store";
+import { WishlistStoreService } from "../../services/wishlist-store.service";
 
 @Component({
   selector: 'app-wishlist',
@@ -22,6 +22,6 @@ export class WishlistComponent {
 
   constructor(
     private _productsService: ProductsService,
-    private _wishlistStoreService: WishlistStore,
+    private _wishlistStoreService: WishlistStoreService,
   ) {}
 }

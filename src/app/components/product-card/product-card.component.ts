@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
 import { ProductModel } from "../../models/product.model";
 import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { BehaviorSubject, combineLatest, map, Observable } from "rxjs";
-import { WishlistStore } from "../../stores/wishlist.store";
+import { WishlistStoreService } from "../../services/wishlist-store.service";
 import { CategoriesStoreService } from "../../services/categories-store.service";
 import { CartStoreService } from "../../services/cart-store.service";
 
@@ -59,7 +59,7 @@ export class ProductCardComponent {
   constructor(
     private _cartStoreService: CartStoreService,
     private _categoriesStoreService: CategoriesStoreService,
-    private _wishlistStoreService: WishlistStore
+    private _wishlistStoreService: WishlistStoreService
   ) {}
 
   ngOnInit(): void {
@@ -67,8 +67,10 @@ export class ProductCardComponent {
   }
 
   public updateWishlist(productId: string): void {
-    this._wishlistStoreService.productsIdsSubject.next(
-      this._wishlistStoreService.productsIdsSubject.value.filter(a => a !== productId)
+    const wishlistProducts = this._wishlistStoreService.getWishlistItemsIds;
+    this._wishlistStoreService.updateWishlist(
+      wishlistProducts.includes(productId) ?
+        wishlistProducts.filter(a => a !== productId) : [...wishlistProducts, productId]
     );
   }
 

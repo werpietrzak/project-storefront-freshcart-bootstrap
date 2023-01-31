@@ -3,7 +3,7 @@ import { map, Observable } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { ProductModel } from "../../models/product.model";
 import { ProductsService } from "../../services/products.service";
-import { CategoriesService } from "../../services/categories.service";
+import { CategoriesStoreService } from "../../services/categories-store.service";
 
 @Component({
   selector: 'app-featured-category',
@@ -15,7 +15,7 @@ import { CategoriesService } from "../../services/categories.service";
 export class FeaturedCategoryComponent {
   @Input() categoryId: string;
 
-  readonly category$: Observable<CategoryModel> = this._categoriesService.getAllCategories().pipe(
+  readonly category$: Observable<CategoryModel> = this._categoriesStoreService.categories$.pipe(
     map(categories => categories.find(category => category.id === this.categoryId)!)
   );
 
@@ -29,6 +29,6 @@ export class FeaturedCategoryComponent {
 
   constructor(
     private _productsService: ProductsService,
-    private _categoriesService: CategoriesService,
+    private _categoriesStoreService: CategoriesStoreService,
   ) {}
 }

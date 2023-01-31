@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 import { CategoriesService } from "../../services/categories.service";
 import { BehaviorSubject, map, Observable } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
-import { WishlistStore } from "../../stores/wishlist.store";
+import { WishlistStoreService } from "../../services/wishlist-store.service";
 import { CartStoreService } from "../../services/cart-store.service";
+import { CategoriesStoreService } from "../../services/categories-store.service";
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,7 @@ export class HeaderComponent {
 
   public mobileMenuToggle$: Observable<boolean> = this._mobileMenuToggleSubject.asObservable();
 
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesStoreService.categories$;
 
   readonly wishlistItems$: Observable<number> = this._wishlistStore.productsIds$.pipe(
     map(products => products.length)
@@ -29,7 +30,8 @@ export class HeaderComponent {
 
   constructor(
     private _cartStoreService: CartStoreService,
-    private _wishlistStore: WishlistStore,
+    private _categoriesStoreService: CategoriesStoreService,
+    private _wishlistStore: WishlistStoreService,
     private _categoriesService: CategoriesService
   ) {}
 

@@ -7,7 +7,7 @@ import { StoreModel, StoreTagModel } from "../models/store.model";
 export class StoresService {
   constructor(private _httpClient: HttpClient) {}
 
-  getAllStores(): Observable<StoreModel[]> {
+  public getAllStores(): Observable<StoreModel[]> {
     return this._httpClient.get<StoreModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-stores')
       .pipe(
         map(stores => stores.map(
@@ -19,7 +19,7 @@ export class StoresService {
       );
   }
 
-  getOneStore(storeId: string): Observable<StoreModel> {
+  public getOneStore(storeId: string): Observable<StoreModel> {
     return this._httpClient.get<StoreModel>(
       `https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-stores/${storeId}`
     ).pipe(
@@ -31,7 +31,7 @@ export class StoresService {
     );
   }
 
-  getAllStoreTags(): Observable<StoreTagModel[]> {
+  public getAllStoreTags(): Observable<StoreTagModel[]> {
     return this._httpClient.get<StoreTagModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-store-tags');
   }
 }

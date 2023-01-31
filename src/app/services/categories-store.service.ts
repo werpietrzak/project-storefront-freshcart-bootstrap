@@ -11,7 +11,7 @@ export class CategoriesStoreService {
 
   constructor(private _categoriesService: CategoriesService) {}
 
-  public getCategories(): CategoryModel[] {
+  get getCategories(): CategoryModel[] {
     return this._categoriesSubject.getValue();
   }
 
