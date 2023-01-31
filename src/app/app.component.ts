@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CategoriesStoreService } from "./services/categories-store.service";
+import { ProductsStoreService } from "./services/products-store.service";
 
 @Component({
   selector: 'app-root',
@@ -9,9 +10,11 @@ import { CategoriesStoreService } from "./services/categories-store.service";
 export class AppComponent {
   constructor(
     public _categoriesStoreService: CategoriesStoreService,
+    public _productsStoreService: ProductsStoreService,
   ) {}
 
   ngOnInit() {
     this._categoriesStoreService.loadCategories();
+    this._productsStoreService.loadProducts();
   }
 }

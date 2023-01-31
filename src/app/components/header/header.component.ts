@@ -3,6 +3,7 @@ import { CategoriesService } from "../../services/categories.service";
 import { BehaviorSubject, map, Observable } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { WishlistStore } from "../../stores/wishlist.store";
+import { CartStoreService } from "../../services/cart-store.service";
 
 @Component({
   selector: 'app-header',
@@ -22,7 +23,12 @@ export class HeaderComponent {
     map(products => products.length)
   );
 
+  readonly cartItems$: Observable<number> = this._cartStoreService.cartProducts$.pipe(
+    map(items => items.reduce((acc, cur) => acc + cur.quantity, 0))
+  );
+
   constructor(
+    private _cartStoreService: CartStoreService,
     private _wishlistStore: WishlistStore,
     private _categoriesService: CategoriesService
   ) {}
