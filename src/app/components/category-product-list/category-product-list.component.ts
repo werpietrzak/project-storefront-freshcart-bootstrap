@@ -206,7 +206,7 @@ export class CategoryProductListComponent {
       this._selectedStoresSubject.next(selectedStores.filter(a => a !== storeId));
     }
   }
-
+  
   public updateWishlist(productId: string) {
     const wishlistProducts = [...this._wishlistStore.productsIdsSubject.value];
     this._wishlistStore.productsIdsSubject.next(
