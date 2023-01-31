@@ -1,5 +1,17 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { combineLatest, debounceTime, map, Observable, of, shareReplay, startWith, switchMap, take, tap } from "rxjs";
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+  tap
+} from "rxjs";
 import { CategoryModel } from "../../models/category.model";
 import { CategoriesService } from "../../services/categories.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -60,6 +72,10 @@ export class CategoryProductListComponent {
     { label: 'Avg. Rating', value: 'desc', property: 'ratingValue' },
   ]);
 
+  private _selectedStoresSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  public selectedStores$: Observable<string[]> = this._selectedStoresSubject.asObservable();
+
   readonly products$: Observable<ProductQueryModel[]> = combineLatest([
     this.selectedCategory$,
     this._productsService.getAllProducts(),
@@ -67,15 +83,17 @@ export class CategoryProductListComponent {
       startWith({ priceFrom: '', priceTo: '' }),
       debounceTime(500),
     ),
+    this.selectedStores$,
   ]).pipe(
-    map(([category, products, filters]) => {
+    map(([category, products, filters, storeIds]) => {
       const { priceFrom, priceTo, rating } = filters;
       return products
         .reduce((acc: ProductQueryModel[], cur) => (
           cur.categoryId === category.id &&
           (!priceFrom || !priceFrom.length || cur.price >= +priceFrom) &&
           (!priceTo || cur.price <= +priceTo) &&
-          (!rating || Math.floor(cur.ratingValue) === rating) ?
+          (!rating || Math.floor(cur.ratingValue) === rating) &&
+          (!storeIds?.length || cur.storeIds.some(storeId => storeIds.includes(storeId))) ?
             [...acc, {
               name: cur.name,
               price: cur.price,
@@ -136,20 +154,6 @@ export class CategoryProductListComponent {
     private _router: Router,
     ) {}
 
-  private convertRatingToStars(rating: number): number[] {
-    let result = new Array(5).fill(0);
-    for (let i = 0; i < 5; i++) {
-      if (rating >= 1) {
-        result[i] = 1;
-        rating -= 1;
-      } else {
-        result[i] = rating;
-        break;
-      }
-    }
-    return result;
-  }
-
   setItemsPerPage(value: number): void {
     combineLatest([
       this.queryParams$,
@@ -176,5 +180,31 @@ export class CategoryProductListComponent {
           }})
       })
     ).subscribe();
+  }
+
+  public updateSelectedStores(storeId: string, event: any) {
+    const selectedStores = this._selectedStoresSubject.value;
+
+    if (event.target.checked && !selectedStores.includes(storeId)) {
+      this._selectedStoresSubject.next([...selectedStores, storeId]);
+    }
+
+    if (!event.target.checked && selectedStores.includes(storeId)) {
+      this._selectedStoresSubject.next(selectedStores.filter(a => a !== storeId));
+    }
+  }
+
+  private convertRatingToStars(rating: number): number[] {
+    let result = new Array(5).fill(0);
+    for (let i = 0; i < 5; i++) {
+      if (rating >= 1) {
+        result[i] = 1;
+        rating -= 1;
+      } else {
+        result[i] = rating;
+        break;
+      }
+    }
+    return result;
   }
 }
