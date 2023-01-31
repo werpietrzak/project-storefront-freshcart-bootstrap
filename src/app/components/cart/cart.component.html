@@ -64,16 +64,28 @@
                       </div>
                       <div class="col-3 col-md-3 col-lg-2">
                         <div class="input-group input-spinner">
-                          <input type="button" value="-" class="button-minus  btn  btn-sm " data-field="quantity">
+                          <input
+                            #decrease
+                            type="button"
+                            value="-"
+                            class="button-minus btn btn-sm"
+                            data-field="quantity"
+                            (click)="changeQuantity(decrease.value, item.id)"
+                          >
                           <input
                             type="number"
-                            step="1"
-                            max="10"
                             [value]="item.quantity"
                             name="quantity"
                             class="quantity-field form-control-sm form-input"
                           >
-                          <input type="button" value="+" class="button-plus btn btn-sm" data-field="quantity">
+                          <input
+                            #increase
+                            type="button"
+                            value="+"
+                            class="button-plus btn btn-sm"
+                            data-field="quantity"
+                            (click)="changeQuantity(increase.value, item.id)"
+                          >
                         </div>
                       </div>
                       <div class="col-2 text-lg-end text-start text-md-end col-md-2">
@@ -95,17 +107,13 @@
         </div>
         <!-- sidebar -->
         <div class="col-12 col-lg-4 col-md-5">
-          <!-- card -->
           <div class="mb-5 card">
             <div class="card-body p-6">
-              <!-- heading -->
               <h2 class="h5 mb-4">
                 Summary
               </h2>
               <div class="card mb-2">
-                <!-- list group -->
                 <ul class="list-group list-group-flush">
-                  <!-- list group item -->
                   <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="me-auto">
                       <div>Item Subtotal</div>
@@ -114,7 +122,6 @@
                       {{itemSubtotal$ | async | currency}}
                     </span>
                   </li>
-                  <!-- list group item -->
                   <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="me-auto">
                       <div>Shipping Fee</div>
@@ -123,7 +130,6 @@
                       {{shippingFee$ | async | currency}}
                     </span>
                   </li>
-                  <!-- list group item -->
                   <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="me-auto">
                       <div class="fw-bold">
@@ -138,7 +144,10 @@
               </div>
               <div class="d-grid mb-1 mt-4">
                 <!-- checkout btn -->
-                <button class="btn btn-primary btn-lg d-flex justify-content-between align-items-center" type="submit">
+                <button
+                  class="btn btn-primary btn-lg d-flex justify-content-between align-items-center"
+                  type="submit"
+                >
                   Go to Checkout <span class="fw-bold">{{subtotal$ | async | currency}}</span></button>
               </div>
               <!-- text -->
