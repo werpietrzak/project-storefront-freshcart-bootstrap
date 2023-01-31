@@ -32,6 +32,11 @@ import { ProductModel } from "../../models/product.model";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoryProductListComponent {
+  readonly selectedCategory$: Observable<CategoryModel> = this._activatedRoute.params.pipe(
+    switchMap(params => this._categoriesService.getOneCategory(params['categoryId'])),
+    shareReplay(1)
+  );
+
   readonly queryParams$: Observable<PaginationQueryModel> = this._activatedRoute.queryParams.pipe(
     map(params => ({
       page: params['page'] ? +params['page'] : 1,
@@ -40,18 +45,17 @@ export class CategoryProductListComponent {
     shareReplay(1),
   );
 
+  // categories
+
   readonly categories$: Observable<CategoryModel[]> = this._categoriesStoreService.categories$;
 
-  readonly selectedCategory$: Observable<CategoryModel> = this._activatedRoute.params.pipe(
-    switchMap(params => this._categoriesService.getOneCategory(params['categoryId'])),
-    shareReplay(1)
-  );
-
-  readonly storeFilter: FormControl = new FormControl('');
+  // store filter
 
   private _selectedStoresSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   public selectedStores$: Observable<string[]> = this._selectedStoresSubject.asObservable();
+
+  readonly storeFilter: FormControl = new FormControl('');
 
   readonly stores$: Observable<StoreModel[]> = combineLatest([
     this._storesStoreService.stores$,
@@ -64,6 +68,14 @@ export class CategoryProductListComponent {
     ))
   );
 
+  readonly filterForm: FormGroup = new FormGroup({
+    priceFrom: new FormControl('', [Validators.pattern("^[0-9]*$")]),
+    priceTo: new FormControl('', [Validators.pattern("^[0-9]*$")]),
+    rating: new FormControl(),
+  });
+
+  // rating filter
+
   readonly starRatings$: Observable<{ value: number, stars: number[] }[]> = of([5, 4, 3, 2, 1].map(
     a => {
       const result = Array(5).fill(0);
@@ -74,13 +86,7 @@ export class CategoryProductListComponent {
     }
   ));
 
-  readonly filterForm: FormGroup = new FormGroup({
-    priceFrom: new FormControl('', [Validators.pattern("^[0-9]*$")]),
-    priceTo: new FormControl('', [Validators.pattern("^[0-9]*$")]),
-    rating: new FormControl(),
-  });
-
-  readonly sortingForm: FormControl = new FormControl();
+  // sorting
 
   readonly sortingOptions$: Observable<SortingOptionQueryModel[]> = of([
     { label: 'Featured', value: 'desc', property: 'featureValue' },
@@ -88,6 +94,10 @@ export class CategoryProductListComponent {
     { label: 'Price: High to Low', value: 'desc', property: 'price' },
     { label: 'Avg. Rating', value: 'desc', property: 'ratingValue' },
   ]);
+
+  readonly sortingForm: FormControl = new FormControl();
+
+  // products
 
   readonly products$: Observable<ProductModel[]> = combineLatest([
     this.selectedCategory$,
@@ -144,12 +154,14 @@ export class CategoryProductListComponent {
     )
   );
 
+  // pagination
+
+  readonly itemsPerPageValues$: Observable<number[]> = of([5, 10, 15]);
+
   readonly paginationForm: FormGroup = new FormGroup({
     itemsPerPage: new FormControl(),
     page: new FormControl(),
   });
-
-  readonly itemsPerPageValues$: Observable<number[]> = of([5, 10, 15]);
 
   readonly pages$: Observable<number[]> = combineLatest([
     this.queryParams$,
