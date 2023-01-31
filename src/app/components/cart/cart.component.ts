@@ -3,6 +3,7 @@ import { combineLatest, map, Observable, of } from "rxjs";
 import { CartProductQueryModel } from "../../queryModels/cart-product-query.model";
 import { CartStoreService } from "../../services/cart-store.service";
 import { ProductsStoreService } from "../../services/products-store.service";
+import { ProductModel } from "../../models/product.model";
 
 @Component({
   selector: 'app-cart',
@@ -12,18 +13,28 @@ import { ProductsStoreService } from "../../services/products-store.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CartComponent {
-  public cartItems$: Observable<CartProductQueryModel[]> = this._productsStoreService.products$.pipe(
-    map(products => products.map(product => ({
-      name: product.name,
-      price: product.price,
-      category: product.categoryId,
-      imageUrl: product.imageUrl,
-      id: product.id,
-    })))
+  public cartItems$: Observable<CartProductQueryModel[]> = combineLatest([
+    this._cartStoreService.cartProducts$,
+    this._productsStoreService.products$,
+  ]).pipe(
+    map(([cartItems, products]) => cartItems.map(item => {
+      const productMap = products.reduce((acc, cur) => {
+        acc[cur.id] = cur;
+        return acc;
+      }, {} as { [id: string]: ProductModel });
+      return ({
+        name: productMap[item.productId].name,
+        pricePerUnit: productMap[item.productId].price,
+        imageUrl: productMap[item.productId].imageUrl,
+        id: item.productId,
+        quantity: item.quantity,
+        totalPrice: item.quantity * productMap[item.productId].price,
+      })
+    }))
   );
 
   public itemSubtotal$: Observable<number> = this.cartItems$.pipe(
-    map(items => items.reduce((acc, cur) => acc + cur.price, 0))
+    map(items => items.reduce((acc, cur) => acc + cur.totalPrice, 0))
   );
 
   public shippingFee$: Observable<number> = of(3);

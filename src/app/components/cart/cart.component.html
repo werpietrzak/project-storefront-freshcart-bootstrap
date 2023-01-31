@@ -7,71 +7,90 @@
         </h3>
       </div>
       <div class="row">
-        <!-- left column -->
+        <!-- main column -->
         <div class="col-lg-8 col-md-7">
           <div class="py-3">
-            <ul class="list-group list-group-flush">
-              <!-- product card -->
-              <li *ngFor="let item of cartItems$ | async" class="list-group-item py-3 py-lg-0 px-0 border-top">
-                <div class="row align-items-center">
-                  <div class="col-3 col-md-2">
-                    <img
-                      [src]="item.imageUrl"
-                      alt="Ecommerce"
-                      class="img-fluid"
-                    >
-                  </div>
-                  <div class="col-4 col-md-5">
-                    <a class="text-inherit">
-                      <h6 class="mb-0">
-                        {{item.name}}
-                      </h6>
-                    </a>
-                    <div class="mt-2 small lh-1">
-                      <a href="/" class="text-decoration-none text-inherit">
-                        <span class="me-1 align-text-bottom">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-trash-2 text-success"
+            <ng-container *ngIf="cartItems$ | async as cartItems">
+              <ng-container *ngIf="cartItems.length; else emptyCart">
+                <ul class="list-group list-group-flush">
+                  <!-- product card -->
+                  <li *ngFor="let item of cartItems$ | async" class="list-group-item py-3 py-lg-0 px-0 border-top">
+                    <div class="row align-items-center">
+                      <div class="col-3 col-md-2">
+                        <img
+                          [src]="item.imageUrl"
+                          alt="Ecommerce"
+                          class="img-fluid"
+                        >
+                      </div>
+                      <div class="col-4 col-md-5">
+                        <a class="text-inherit">
+                          <h6 class="mb-0">
+                            {{item.name}}
+                          </h6>
+                        </a>
+                        <span>
+                          <small class="text-muted">
+                            {{item.pricePerUnit | currency}}
+                          </small>
+                        </span>
+                        <div class="mt-2 small lh-1">
+                          <a href="/" class="text-decoration-none text-inherit">
+                            <span class="me-1 align-text-bottom">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="feather feather-trash-2 text-success"
+                              >
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                              </svg>
+                            </span>
+                            <span class="text-muted">
+                              Remove
+                            </span>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="col-3 col-md-3 col-lg-2">
+                        <div class="input-group input-spinner">
+                          <input type="button" value="-" class="button-minus  btn  btn-sm " data-field="quantity">
+                          <input
+                            type="number"
+                            step="1"
+                            max="10"
+                            [value]="item.quantity"
+                            name="quantity"
+                            class="quantity-field form-control-sm form-input"
                           >
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                            </path>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                          </svg>
-                        </span>
-                        <span class="text-muted">
-                          Remove
-                        </span>
-                      </a>
+                          <input type="button" value="+" class="button-plus btn btn-sm" data-field="quantity">
+                        </div>
+                      </div>
+                      <div class="col-2 text-lg-end text-start text-md-end col-md-2">
+                        <span class="fw-bold">{{item.totalPrice | currency}}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-3 col-md-3 col-lg-2">
-                    <div class="input-group input-spinner">
-                      <input type="button" value="-" class="button-minus  btn  btn-sm " data-field="quantity">
-                      <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field form-control-sm form-input">
-                      <input type="button" value="+" class="button-plus btn btn-sm" data-field="quantity">
-                    </div>
-                  </div>
-                  <div class="col-2 text-lg-end text-start text-md-end col-md-2">
-                    <span class="fw-bold">{{item.price | currency}}</span>
-                  </div>
+                  </li>
+                </ul>
+                <!-- update cart button -->
+                <div class="d-flex justify-content-end mt-4">
+                  <a class="btn btn-dark" disabled>Update Cart</a>
                 </div>
-              </li>
-            </ul>
-            <!-- update cart button -->
-            <div class="d-flex justify-content-end mt-4">
-              <a class="btn btn-dark">Update Cart</a>
-            </div>
+              </ng-container>
+              <ng-template #emptyCart>
+                Your cart is currently empty.
+              </ng-template>
+            </ng-container>
           </div>
         </div>
         <!-- sidebar -->

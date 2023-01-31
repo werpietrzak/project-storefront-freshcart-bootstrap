@@ -1,7 +1,8 @@
 export interface CartProductQueryModel {
   name: string;
-  price: number;
-  category: string;
+  pricePerUnit: number;
+  totalPrice: number;
   imageUrl: string;
   id: string;
+  quantity: number;
 }

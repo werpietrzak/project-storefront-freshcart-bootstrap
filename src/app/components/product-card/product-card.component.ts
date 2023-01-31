@@ -4,6 +4,7 @@ import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { BehaviorSubject, combineLatest, map, Observable } from "rxjs";
 import { WishlistStore } from "../../stores/wishlist.store";
 import { CategoriesStoreService } from "../../services/categories-store.service";
+import { CartStoreService } from "../../services/cart-store.service";
 
 @Component({
   selector: 'app-product-card',
@@ -56,6 +57,7 @@ export class ProductCardComponent {
   );
 
   constructor(
+    private _cartStoreService: CartStoreService,
     private _categoriesStoreService: CategoriesStoreService,
     private _wishlistStoreService: WishlistStore
   ) {}
@@ -68,6 +70,21 @@ export class ProductCardComponent {
     this._wishlistStoreService.productsIdsSubject.next(
       this._wishlistStoreService.productsIdsSubject.value.filter(a => a !== productId)
     );
+  }
+
+  public addToCart(productId: string): void {
+    const currentCartItems = this._cartStoreService.getCartProducts;
+    const index = currentCartItems.findIndex(entry => entry.productId === productId);
+
+    if (index !== -1) {
+      currentCartItems[index] = { productId, quantity: currentCartItems[index].quantity + 1 };
+      this._cartStoreService.updateCartProducts([...currentCartItems]);
+    } else {
+      this._cartStoreService.updateCartProducts([
+        ...currentCartItems,
+        { productId, quantity: 1 },
+      ]);
+    }
   }
 
   private convertRatingToStars(rating: number): number[] {
