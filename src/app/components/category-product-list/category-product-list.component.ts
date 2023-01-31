@@ -49,12 +49,18 @@ export class CategoryProductListComponent {
 
   readonly storeFilter: FormControl = new FormControl('');
 
+  private _selectedStoresSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
+  public selectedStores$: Observable<string[]> = this._selectedStoresSubject.asObservable();
+
   readonly stores$: Observable<StoreModel[]> = combineLatest([
     this._storesStoreService.stores$,
     this.storeFilter.valueChanges.pipe(startWith('')),
+    this.selectedStores$,
   ]).pipe(
-    map(([stores, query]) => stores.filter(
+    map(([stores, query, selectedStores]) => stores.filter(
       store => store.name.toLowerCase().includes(query.toLowerCase())
+        || selectedStores.includes(store.id)
     ))
   );
 
@@ -82,10 +88,6 @@ export class CategoryProductListComponent {
     { label: 'Price: High to Low', value: 'desc', property: 'price' },
     { label: 'Avg. Rating', value: 'desc', property: 'ratingValue' },
   ]);
-
-  private _selectedStoresSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-
-  public selectedStores$: Observable<string[]> = this._selectedStoresSubject.asObservable();
 
   readonly products$: Observable<ProductModel[]> = combineLatest([
     this.selectedCategory$,
