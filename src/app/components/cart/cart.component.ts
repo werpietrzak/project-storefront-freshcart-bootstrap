@@ -50,4 +50,25 @@ export class CartComponent {
     private _cartStoreService: CartStoreService,
     private _productsStoreService: ProductsStoreService,
   ) {}
+
+  public changeQuantity(value: string, productId: string): void {
+    const cartItems = this._cartStoreService.getCartProducts;
+    const index = cartItems.findIndex(entry => entry.productId === productId);
+
+    if (value === '-' && cartItems[index].quantity === 1) {
+      this.removeFromCart(productId);
+    } else {
+      cartItems[index] = {
+        productId,
+        quantity: value === '+' ? cartItems[index].quantity + 1 : cartItems[index].quantity - 1,
+      };
+      this._cartStoreService.updateCartProducts(cartItems);
+    }
+  }
+
+  public removeFromCart(productId: string): void {
+    this._cartStoreService.updateCartProducts(
+      this._cartStoreService.getCartProducts.filter(item => item.productId !== productId)
+    );
+  }
 }

@@ -11,7 +11,7 @@ export class ProductsStoreService {
 
   constructor(private _productsService: ProductsService) {}
 
-  public getProducts(): ProductModel[] {
+  get getProducts(): ProductModel[] {
     return this._productsSubject.getValue();
   }
 

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { CategoriesService } from "../../services/categories.service";
 import { Observable, of } from "rxjs";
 import { CategoryModel } from "../../models/category.model";
-import { StoresService } from "../../services/stores.service";
 import { StoreModel } from "../../models/store.model";
+import { CategoriesStoreService } from "../../services/categories-store.service";
+import { StoresStoreService } from "../../services/stores-store.service";
 
 @Component({
   selector: 'app-footer',
@@ -13,9 +13,9 @@ import { StoreModel } from "../../models/store.model";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent {
-  readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllCategories();
+  readonly categories$: Observable<CategoryModel[]> = this._categoriesStoreService.categories$;
 
-  readonly stores$: Observable<StoreModel[]> = this._storesService.getAllStores();
+  readonly stores$: Observable<StoreModel[]> = this._storesStoreService.stores$;
 
   readonly getToKnowUs$: Observable<string[]> = of([
     'Company',
@@ -26,7 +26,7 @@ export class FooterComponent {
   ]);
 
   constructor(
-    private _categoriesService: CategoriesService,
-    private _storesService: StoresService,
+    private _categoriesStoreService: CategoriesStoreService,
+    private _storesStoreService: StoresStoreService,
   ) {}
 }

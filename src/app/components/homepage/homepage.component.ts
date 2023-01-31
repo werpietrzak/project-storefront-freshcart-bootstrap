@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { Observable, of } from "rxjs";
 
 @Component({
   selector: 'app-homepage',
@@ -8,5 +9,5 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomepageComponent {
-  readonly featuredCategoriesIds$ = ['5', '2'];
+  readonly featuredCategoriesIds$: Observable<string[]> = of(['5', '2']);
 }

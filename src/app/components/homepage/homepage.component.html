@@ -1,5 +1,5 @@
 <app-category-list-grid></app-category-list-grid>
-<ng-container *ngFor="let categoryId of featuredCategoriesIds$">
+<ng-container *ngFor="let categoryId of featuredCategoriesIds$ | async">
   <app-featured-category [categoryId]="categoryId"></app-featured-category>
 </ng-container>
 <app-store-list-grid></app-store-list-grid>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { combineLatest, map, Observable } from "rxjs";
 import { StoreQueryModel } from "../../queryModels/store-query.model";
-import { StoresService } from "../../services/stores.service";
+import { StoresStoreService } from "../../services/stores-store.service";
 
 @Component({
   selector: 'app-store-list-grid',
@@ -12,8 +12,8 @@ import { StoresService } from "../../services/stores.service";
 })
 export class StoreListGridComponent {
   readonly stores$: Observable<StoreQueryModel[]> = combineLatest([
-    this._storesService.getAllStores(),
-    this._storesService.getAllStoreTags(),
+    this._storesStoreService.stores$,
+    this._storesStoreService.storeTags$,
   ]).pipe(
     map(([stores, tags]) => stores.map(store => {
       const tagsMap = tags.reduce((acc, cur) => {
@@ -30,5 +30,5 @@ export class StoreListGridComponent {
     }))
   );
 
-  constructor(private _storesService: StoresService) {}
+  constructor(private _storesStoreService: StoresStoreService) {}
 }

@@ -11,7 +11,7 @@ import { StoreProductListComponentModule } from "./components/store-product-list
 import { ProductsServiceModule } from "./services/products.service-module";
 import { WishlistComponent } from "./components/wishlist/wishlist.component";
 import { WishlistComponentModule } from "./components/wishlist/wishlist.component-module";
-import { WishlistStoreModule } from "./stores/wishlist.store-module";
+import { WishlistStoreServiceModule } from "./services/wishlist-store.service-module";
 import { CartComponent } from "./components/cart/cart.component";
 import { CartComponentModule } from "./components/cart/cart.component-module";
 import { CartStoreServiceModule } from "./services/cart-store.service-module";
@@ -33,7 +33,7 @@ const routes: Routes = [
     StoreProductListComponentModule,
     ProductsServiceModule,
     WishlistComponentModule,
-    WishlistStoreModule,
+    WishlistStoreServiceModule,
     CartComponentModule,
     CartStoreServiceModule,
   ],
