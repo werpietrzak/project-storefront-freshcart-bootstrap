@@ -8,4 +8,5 @@ export interface ProductQueryModel {
   featureValue: number;
   imageUrl: string;
   id: string;
+  isWishlisted: boolean;
 }

@@ -12,7 +12,7 @@
   </div>
   <div class="navbar navbar-light py-lg-4 pt-3 px-0 pb-0">
     <div class="container">
-      <div class="row w-100 align-items-center g-lg-2 g-0">
+      <div class="row w-100 align-items-center g-lg-2 g-0 justify-content-between">
         <div class="col-xxl-2 col-lg-3">
           <a class="navbar-brand d-none d-lg-block" routerLink="/">
             <img src="assets/images/logo/freshcart-logo.svg" alt="eCommerce HTML Template">
@@ -33,6 +33,34 @@
                 <span class="icon-bar middle-bar"></span>
                 <span class="icon-bar bottom-bar"></span>
               </button>
+            </div>
+          </div>
+        </div>
+        <!-- right corner icons -->
+        <div class="col-md-2 col-xxl-1 text-end d-none d-lg-block">
+          <div class="list-inline">
+            <!-- wishlist icon -->
+            <div class="list-inline-item">
+              <a [routerLink]="'/wishlist'" class="text-muted position-relative">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-heart"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                  </path>
+                </svg>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                    {{wishlistItems$ | async}}
+                  </span>
+              </a>
             </div>
           </div>
         </div>

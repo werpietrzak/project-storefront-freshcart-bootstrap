@@ -153,6 +153,26 @@
                         </span>
                       </div>
                     </div>
+                    <!-- wishlist button -->
+                    <div class="mt-3">
+                      <a
+                        class="btn btn-icon btn-sm btn-outline-gray-400 text-muted"
+                        data-bs-toggle="tooltip"
+                        data-bs-html="true"
+                        aria-label="Wishlist"
+                        data-bs-original-title="Wishlist"
+                        aria-describedby="tooltip680637"
+                        (click)="updateWishlist(product.id)"
+                      >
+                        <i
+                          class="bi"
+                          [ngClass]="{
+                          'bi-heart-fill': product.isWishlisted,
+                          'bi-heart': !product.isWishlisted
+                          }"
+                        ></i>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

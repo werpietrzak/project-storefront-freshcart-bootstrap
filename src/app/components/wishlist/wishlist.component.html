@@ -1,0 +1,19 @@
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="row">
+      <!-- header -->
+      <div class="col-12 mb-6">
+        <h3 class="mb-1">
+          Wishlist
+        </h3>
+      </div>
+      <!-- product cards -->
+      <div class="row g-4 row-cols-1 mt-2">
+        <app-product-card
+          *ngFor="let product of wishlistProducts$ | async"
+          [product]="product"
+        ></app-product-card>
+      </div>
+    </div>
+  </div>
+</section>
