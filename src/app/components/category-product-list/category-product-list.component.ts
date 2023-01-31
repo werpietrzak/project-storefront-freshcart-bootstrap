@@ -15,15 +15,14 @@ import {
 import { CategoryModel } from "../../models/category.model";
 import { CategoriesService } from "../../services/categories.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ProductQueryModel } from "../../queryModels/product-query.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { StoreModel } from "../../models/store.model";
-import { WishlistStoreService } from "../../services/wishlist-store.service";
 import { PaginationQueryModel } from "../../queryModels/pagination-query.model";
 import { SortingOptionQueryModel } from "../../queryModels/sorting-option-query.model";
 import { CategoriesStoreService } from "../../services/categories-store.service";
 import { StoresStoreService } from "../../services/stores-store.service";
 import { ProductsStoreService } from "../../services/products-store.service";
+import { ProductModel } from "../../models/product.model";
 
 @Component({
   selector: 'app-category-product-list',
@@ -88,7 +87,7 @@ export class CategoryProductListComponent {
 
   public selectedStores$: Observable<string[]> = this._selectedStoresSubject.asObservable();
 
-  readonly products$: Observable<ProductQueryModel[]> = combineLatest([
+  readonly products$: Observable<ProductModel[]> = combineLatest([
     this.selectedCategory$,
     this._productsStoreService.products$,
     this.filterForm.valueChanges.pipe(
@@ -96,34 +95,22 @@ export class CategoryProductListComponent {
       debounceTime(500),
     ),
     this.selectedStores$,
-    this._wishlistStoreService.productsIds$,
   ]).pipe(
-    map(([category, products, filters, storeIds, wishlist]) => {
-      const { priceFrom, priceTo, rating } = filters;
-      return products
-        .reduce((acc: ProductQueryModel[], cur) => (
-          cur.categoryId === category.id &&
-          (!priceFrom || !priceFrom.length || cur.price >= +priceFrom) &&
-          (!priceTo || cur.price <= +priceTo) &&
-          (!rating || Math.floor(cur.ratingValue) === rating) &&
-          (!storeIds?.length || cur.storeIds.some(storeId => storeIds.includes(storeId))) ?
-            [...acc, {
-              name: cur.name,
-              price: cur.price,
-              category: category.name,
-              ratingValue: cur.ratingValue,
-              ratingCount: cur.ratingCount,
-              ratingStars: this.convertRatingToStars(cur.ratingValue),
-              featureValue: cur.featureValue,
-              imageUrl: cur.imageUrl,
-              id: cur.id,
-              isWishlisted: wishlist.includes(cur.id),
-            }] : acc), [])
+    map(([category, products, filters, storeIds]) => {
+        const { priceFrom, priceTo, rating } = filters;
+        return products
+          .filter(product => (
+            product.categoryId === category.id &&
+            (!priceFrom || !priceFrom.length || product.price >= +priceFrom) &&
+            (!priceTo || product.price <= +priceTo) &&
+            (!rating || Math.floor(product.ratingValue) === rating) &&
+            (!storeIds?.length || product.storeIds.some(storeId => storeIds.includes(storeId)))
+          ))
       }
     )
   );
 
-  readonly displayedProducts$: Observable<ProductQueryModel[]> = combineLatest([
+  readonly displayedProducts$: Observable<ProductModel[]> = combineLatest([
     this.products$,
     this.sortingForm.valueChanges.pipe(
       startWith({ value: '', property: '' }),
@@ -134,7 +121,7 @@ export class CategoryProductListComponent {
         const sliceStart = params.itemsPerPage * (params.page - 1);
         return products
           .sort((a, b) => {
-            const {value, property}: { value: string, property: keyof ProductQueryModel } = order;
+            const {value, property}: { value: string, property: keyof ProductModel } = order;
             return value === 'asc' ? +a[property] - +b[property] :
               (value === 'desc' ? +b[property] - +a[property] : 0);
           })
@@ -164,7 +151,6 @@ export class CategoryProductListComponent {
     private _categoriesStoreService: CategoriesStoreService,
     private _productsStoreService: ProductsStoreService,
     private _storesStoreService: StoresStoreService,
-    private _wishlistStoreService: WishlistStoreService,
     private _categoriesService: CategoriesService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
@@ -208,27 +194,5 @@ export class CategoryProductListComponent {
     if (!event.target.checked && selectedStores.includes(storeId)) {
       this._selectedStoresSubject.next(selectedStores.filter(a => a !== storeId));
     }
-  }
-
-  public updateWishlist(productId: string) {
-    const wishlistProducts = this._wishlistStoreService.getWishlistItemsIds;
-    this._wishlistStoreService.updateWishlist(
-      wishlistProducts.includes(productId) ?
-        wishlistProducts.filter(a => a !== productId) : [...wishlistProducts, productId]
-    );
-  }
-
-  private convertRatingToStars(rating: number): number[] {
-    let result = new Array(5).fill(0);
-    for (let i = 0; i < 5; i++) {
-      if (rating >= 1) {
-        result[i] = 1;
-        rating -= 1;
-      } else {
-        result[i] = rating;
-        break;
-      }
-    }
-    return result;
   }
 }
